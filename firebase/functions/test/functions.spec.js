@@ -239,11 +239,10 @@ describe("Unit tests", () => {
         request
             .post('/passport-verification')
             .set('Access-Token', confirmedUser.accessToken)
+            .set('Unit-Test', 'true')
             .attach('passport', 'test/image.jpg')
-            // .attach('bill', 'test/image.jpg')
             .expect(200)
             .end((err, res) => {
-                console.log(res.body);
                 if (err) return done(err);
                 return done();
             });

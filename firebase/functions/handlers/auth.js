@@ -30,7 +30,7 @@ exports.signUp = async (req, res) => {
 
     const {valid, errors, message} = validateSignUPData(newUser);
 
-    if (!valid)//checking validation
+    if (!valid) //checking validation
         return res.status(400).json({
             message,
             errors,
@@ -120,13 +120,13 @@ exports.confirmEmail = async (req, res) => {
     const token = req.query.token;
 
     if (!token) {
-        return res.status(400).send('Token required');
+        return res.status(400).send(html('Token required'));
     }
 
     const snapshot = await db.collection('users').where('emailToken', '==', token).get();
 
     if (snapshot.empty) {
-        return res.status(400).send('Invalid confirmation token');
+        return res.status(400).send(html('Invalid confirmation token or Email has already been Verified'));
     }
 
     await snapshot.docs[0].ref.update({
@@ -135,8 +135,9 @@ exports.confirmEmail = async (req, res) => {
     });
 
 
-    return res.status(200).send('<h3>Email confirmation successful</h3>');
+    return res.status(200).send(html('Email confirmation successful'));
 }
+
 
 exports.getMe = async (req, res) => {
     const token = req.get('Access-Token');
@@ -232,7 +233,12 @@ exports.passportVerification = async (req, res) => {
         return;
     }
 
-    let passportPath = await uploadImageToStorage(passport);
+    let passportPath = '';
+    if (req.get('Unit-Test') === 'true') { // bypass uploading for test
+        passportPath = 'https://google.com/image-test.jpg';
+    } else {
+        passportPath = await uploadImageToStorage(passport);
+    }
 
     await snapshot.docs[0].ref.update({
         passport: {
@@ -299,4 +305,19 @@ function validateBVN(formData) {
         dob: formData.dob,
         phoneNumber: '08097767799'
     };
+}
+
+
+function html(text) {
+    return `
+    <html>
+    <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${text}</title>
+</head>
+<body>
+<h3 style="text-align: center;">${text}</h3>
+</body>
+</html>
+    `;
 }
