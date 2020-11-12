@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kyc_demo/src/components/auth/login_page.dart';
 import 'package:kyc_demo/src/components/auth/register_page.dart';
+import 'package:kyc_demo/src/components/dashboard/dashboard_page.dart';
+import 'package:kyc_demo/src/components/profile/profile_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // unfocus input on tap out
+        // un-focus input on tap out
         FocusScopeNode currentFocus = FocusScope.of(context);
         if (!currentFocus.hasPrimaryFocus) {
           currentFocus.unfocus();
@@ -25,8 +27,9 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
+          accentColor: const Color(0xFF4ad3ce),
         ),
-        initialRoute: RegisterPage.routeName,
+        initialRoute: ProfilePage.routeName,
         getPages: [
           GetPage(
             name: LoginPage.routeName,
@@ -35,6 +38,14 @@ class MyApp extends StatelessWidget {
           GetPage(
             name: RegisterPage.routeName,
             page: () => RegisterPage(),
+          ),
+          GetPage(
+            name: DashboardPage.routeName,
+            page: () => DashboardPage(),
+          ),
+          GetPage(
+            name: ProfilePage.routeName,
+            page: () => ProfilePage(),
           ),
         ],
       ),
