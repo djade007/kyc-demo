@@ -1,9 +1,22 @@
-const {admin, db, firebase} = require('../utils/admin');
+const {admin, db} = require('../utils/admin');
 const functions = require("firebase-functions");
 const bcrypt = require("bcrypt");
-const {validateSignUPData, validateLoginData} = require('../utils/helper');
+
+const {validateSignUPData, validateLoginData, validateBvnData} = require('../utils/helper');
 const randtoken = require('rand-token');
 const AppMail = require('../utils/email');
+
+const baseURL = 'https://us-central1-kyc-damo.cloudfunctions.net/api';
+
+function userObject(data) {
+    return {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        username: data.username,
+        email: data.email,
+        level: data.level,
+    };
+}
 
 exports.signUp = async (req, res) => {
     const newUser = {
@@ -46,7 +59,7 @@ exports.signUp = async (req, res) => {
     // send email
     if (req.body.test !== true) {
         try {
-            const link = 'https://us-central1-kyc-damo.cloudfunctions.net/api/confirm-email?token=' + newUser.emailToken;
+            const link = `${baseURL}/confirm-email?token=${newUser.emailToken}`;
             const body = `
         <p>Visit <a href="${link}">${link}</a> to verify your email address</p>
         `;
@@ -145,13 +158,145 @@ exports.getMe = async (req, res) => {
     return res.status(200).json({
         message: 'Successful',
         data: {
-            user: {
-                firstName: data.firstName,
-                lastName: data.lastName,
-                username: data.username,
-                email: data.email,
-                level: data.level,
-            }
+            user: userObject(data),
         }
     });
+}
+
+exports.bvnVerification = async (req, res) => {
+    const token = req.get('Access-Token');
+
+    if (!token) {
+        return res.status(400).send({message: 'Access token required'});
+    }
+
+    const formData = {
+        bvn: req.body.bvn,
+        dob: req.body.dob
+    }
+
+    const {valid, errors, message} = validateBvnData(formData);
+    if (!valid) return res.status(400).json({message, errors});
+
+
+    const snapshot = await db.collection('users').where('accessToken', '==', token).get();
+
+    if (snapshot.empty) {
+        return res.status(400).json({
+            message: 'Invalid access token'
+        });
+    }
+
+    let mock = validateBVN(formData);
+    if (!mock.valid) {
+        return res.status(400).json({
+            message: "BVN is not valid"
+        });
+    }
+
+    await snapshot.docs[0].ref.update({
+        level: 1,
+    });
+
+    const user = await snapshot.docs[0].ref.get();
+
+    return res.status(200).json({
+        message: 'BVN verification successful',
+        data: {
+            user: userObject(user.data()),
+        }
+    });
+}
+
+const bucket = admin.storage().bucket('kyc-damo.appspot.com');
+
+exports.passportVerification = async (req, res) => {
+    const token = req.get('Access-Token');
+
+    if (!token) {
+        return res.status(400).send({message: 'Access token required'});
+    }
+
+    const snapshot = await db.collection('users').where('accessToken', '==', token).get();
+
+    if (snapshot.empty) {
+        return res.status(400).json({
+            message: 'Invalid access token'
+        });
+    }
+
+    let passport = req.files[0];
+
+    if (!passport) {
+        res.status(400).send('Passport file is required');
+        return;
+    }
+
+    let passportPath = await uploadImageToStorage(passport);
+
+    await snapshot.docs[0].ref.update({
+        passport: {
+            documentName: passportPath,
+            approved: false,
+        }
+    });
+
+    const user = await snapshot.docs[0].ref.get();
+
+    return res.status(200).json({
+        message: 'Passport uploaded successfully',
+        data: {
+            user: userObject(user.data()),
+        }
+    });
+}
+
+const uploadImageToStorage = (file) => {
+    let prom = new Promise((resolve, reject) => {
+        if (!file) {
+            reject(new Error('No image file'));
+        }
+        let newFileName = randtoken.generate(10) + file.originalname; //unique name
+
+        let fileUpload = bucket.file(newFileName);
+        const blobStream = fileUpload.createWriteStream({
+            metadata: {
+                contentType: file.mimetype
+            }
+        });
+
+        blobStream.on('error', (error) => {
+            reject(new Error('Something is wrong! Unable to upload at the moment.'));
+        });
+
+        blobStream.on('finish', () => {
+            const url = `https://storage.googleapis.com/${bucket.name}/${fileUpload.name}`; //image url from firebase server
+            resolve(url);
+
+        });
+
+        blobStream.end(file.buffer);
+    });
+    return prom;
+}
+
+exports.mockBVN = async (req, res) => {
+    const formData = {
+        bvn: req.body.bvn,
+        dob: req.body.dob
+    }
+    const {valid, errors, message} = validateBvnData(formData);
+    if (!valid) return res.status(400).json({message, errors});
+
+    return res.status(200).json({
+        data: validateBVN(formData),
+    });
+}
+
+function validateBVN(formData) {
+    return {
+        valid: formData.dob === '12/12/1980',
+        dob: formData.dob,
+        phoneNumber: '08097767799'
+    };
 }

@@ -8,7 +8,6 @@ class LoginController extends GetxController {
   final loading = false.obs;
 
   void login(GlobalKey<FormBuilderState> formKey) async {
-    print('here');
     if (!formKey.currentState.saveAndValidate()) return;
     final data = formKey.currentState.value;
 

@@ -17,7 +17,9 @@ class AuthController extends GetxController {
     super.onInit();
 
     _token.value = Application.box.get(Keys.token, defaultValue: '');
-    _user.value = User.fromMap(Application.box.get(Keys.user));
+
+    if (logged)
+      _user.value = User.fromMap(Map.from(Application.box.get(Keys.user)));
   }
 
   void onLoggedIn(String newToken, Map<String, dynamic> newUser) {
@@ -25,6 +27,15 @@ class AuthController extends GetxController {
     _user.value = User.fromMap(newUser);
 
     Application.box.put(Keys.token, newToken);
+    Application.box.put(Keys.user, newUser);
+  }
+
+  void updateLevel(int level) {
+    _user.value = user.copyLevel(level);
+  }
+
+  void updateUser(Map<String, dynamic> newUser) {
+    _user.value = User.fromMap(newUser);
     Application.box.put(Keys.user, newUser);
   }
 

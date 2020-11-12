@@ -29,8 +29,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
@@ -41,5 +39,12 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+
+	<key>NSCameraUsageDescription</key>
+    <string>We use your camera to let you take photos and upload to your profile</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>We use your microphone to let you take and upload your voice recordings</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>We use your camera roll to let you attach photos to upload as your profile image</string>
 </dict>
 </plist>

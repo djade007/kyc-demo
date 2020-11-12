@@ -27,38 +27,42 @@ class PassportModal extends StatelessWidget {
       padding: const EdgeInsets.only(
         left: 20,
         right: 20,
-        top: 10,
+        top: 30,
       ),
-      child: FormBuilder(
-        key: formKey,
-        child: Column(
-          children: [
-            FormBuilderTextField(
-              readOnly: controller.loading.value,
-              attribute: 'bvn',
-              decoration: Utils.decoration('BVN Number'),
-              validators: [
-                FormBuilderValidators.required(),
-              ],
-            ).space(bottom: 20),
-            FormBuilderDateTimePicker(
-              inputType: InputType.date,
-              attribute: 'dob',
-              readOnly: controller.loading.value,
-              decoration: Utils.decoration('Date of Birth'),
-            ).space(bottom: 20),
-            SizedBox(
-              width: 150,
-              child: AppButton(
-                title: controller.loading.value ? 'Loading...' : 'Confirm',
-                onPressed: controller.loading.value
-                    ? null
-                    : () {
-                        controller.verifyBVN(formKey);
-                      },
-              ),
-            ).right(),
-          ],
+      child: Material(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: controller.loading.value ? null : controller.uploadPassport,
+          child: SizedBox(
+            width: 200,
+            height: 200,
+            child: controller.loading.value
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator().space(),
+                      Text(
+                        'Uploading...',
+                        style: TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.image, size: 40).space(),
+                      Text(
+                        'Click to Upload Passport',
+                        style: TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
         ),
       ),
     );

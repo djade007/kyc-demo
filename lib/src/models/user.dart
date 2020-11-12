@@ -1,4 +1,6 @@
-class User {
+import 'package:equatable/equatable.dart';
+
+class User extends Equatable {
   final String firstName;
   final String lastName;
   final String username;
@@ -28,4 +30,18 @@ class User {
       confirmedEmail: data['confirmedEmail'] ?? false,
     );
   }
+
+  User copyLevel(int newLevel) {
+    return User(
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      email: email,
+      level: newLevel,
+      confirmedEmail: confirmedEmail,
+    );
+  }
+
+  @override
+  List<Object> get props => [name, level, confirmedEmail, email];
 }

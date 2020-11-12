@@ -46,6 +46,9 @@ class BvnModal extends StatelessWidget {
               attribute: 'dob',
               readOnly: controller.loading.value,
               decoration: Utils.decoration('Date of Birth'),
+              validators: [
+                FormBuilderValidators.required(),
+              ],
             ).space(bottom: 20),
             SizedBox(
               width: 150,

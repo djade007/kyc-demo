@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:kyc_demo/src/application.dart';
 import 'package:kyc_demo/src/components/auth/login_page.dart';
 import 'package:kyc_demo/src/components/auth/register_page.dart';
+import 'package:kyc_demo/src/components/auth/welcome_page.dart';
 import 'package:kyc_demo/src/components/dashboard/dashboard_page.dart';
 import 'package:kyc_demo/src/components/profile/profile_page.dart';
 import 'package:kyc_demo/src/services/bindings.dart';
@@ -33,8 +34,12 @@ class MyApp extends StatelessWidget {
           accentColor: const Color(0xFF4ad3ce),
         ),
         initialBinding: AppBindings(),
-        initialRoute: RegisterPage.routeName,
+        initialRoute: WelcomePage.routeName,
         getPages: [
+          GetPage(
+            name: WelcomePage.routeName,
+            page: () => WelcomePage(),
+          ),
           GetPage(
             name: LoginPage.routeName,
             page: () => LoginPage(),

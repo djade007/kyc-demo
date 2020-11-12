@@ -197,4 +197,55 @@ describe("Unit tests", () => {
                 return done();
             });
     }).timeout(6000);
+
+    it("can update bvn", (done) => {
+        // Invoke function with our fake request and response objects. This will cause the
+        // assertions in the response object to be evaluated.
+
+        request
+            .post('/verify-bvn')
+            .set('Access-Token', confirmedUser.accessToken)
+            .send({
+                'dob': '12/12/1980',
+                'bvn': '12345'
+            })
+            .expect(200)
+            .end((err, res) => {
+                if (err) return done(err);
+                expect(res.body.data.user.level).to.equals(1);
+                return done();
+            });
+    }).timeout(6000);
+
+    it("can mock bvn", (done) => {
+        // Invoke function with our fake request and response objects. This will cause the
+        // assertions in the response object to be evaluated.
+
+        request
+            .post('/mock-bvn')
+            .send({
+                'dob': '12/12/1986',
+                'bvn': '12345'
+            })
+            .expect(200)
+            .end((err, res) => {
+                if (err) return done(err);
+                expect(res.body.data.valid).to.equals(false);
+                return done();
+            });
+    }).timeout(6000);
+
+    it("can upload passport", (done) => {
+        request
+            .post('/passport-verification')
+            .set('Access-Token', confirmedUser.accessToken)
+            .attach('passport', 'test/image.jpg')
+            // .attach('bill', 'test/image.jpg')
+            .expect(200)
+            .end((err, res) => {
+                console.log(res.body);
+                if (err) return done(err);
+                return done();
+            });
+    }).timeout(60000);
 });

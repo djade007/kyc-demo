@@ -11,6 +11,17 @@ const isUsername = (username) => {
     const regx = /^[a-zA-Z0-9_]+$/;
     return Boolean(username.match(regx));
 }
+
+function extractMessage(errors) {
+    let message = '';
+    const keys = Object.keys(errors);
+    if (keys.length > 0) {
+        // add the first error to message
+        message = errors[keys[0]];
+    }
+    return message;
+}
+
 //for validating signup data
 exports.validateSignUPData = (data) => {
     let errors = {};
@@ -41,12 +52,7 @@ exports.validateSignUPData = (data) => {
         errors.password = "Password should be atleast 8 characters";
     }
 
-    let message = '';
-    const keys = Object.keys(errors);
-    if (keys.length > 0) {
-        // add the first error to message
-        message = errors[keys[0]];
-    }
+    let message = extractMessage(errors);
 
     return {
         errors,
@@ -67,5 +73,22 @@ exports.validateLoginData = (data) => {
     return {
         errors,
         valid: Object.keys(errors).length === 0
+    }
+}
+
+exports.validateBvnData = (data) => {
+    let errors = {}
+    if (isEmpty(data.bvn)) {
+        errors.email = "BVN field is required"
+    } else if (isEmpty(data.dob)) {
+        errors.password = "Date of birth filed is required"
+    }
+
+    let message = extractMessage(errors);
+
+    return {
+        errors,
+        message,
+        valid: message === '',
     }
 }
