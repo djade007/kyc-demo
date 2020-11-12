@@ -52,6 +52,13 @@ class AppDrawer extends StatelessWidget {
                     Get.toNamed(ProfilePage.routeName);
                   },
                 ),
+                ListTile(
+                  title: Text('Logout'),
+                  leading: Icon(Icons.exit_to_app),
+                  onTap: () {
+                    Get.back(); // close
+                  },
+                ),
               ],
             ),
           ),
