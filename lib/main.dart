@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
         }
       },
       child: GetMaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'KYC Demo',
         theme: ThemeData(
           primarySwatch: Colors.blue,

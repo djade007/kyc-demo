@@ -2,8 +2,7 @@
 
 KYC Mobile Application using Flutter, Firebase and Express.js
 
-## Structure
-- /firebase holds the firebase project
+## Firebase project in /firebase folder
 - `cd firebase`
 - `npm install`
 - `npm run test`
