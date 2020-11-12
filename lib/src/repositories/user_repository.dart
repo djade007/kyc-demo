@@ -66,3 +66,4 @@ class UserRepository {
     return true;
   }
 }
+

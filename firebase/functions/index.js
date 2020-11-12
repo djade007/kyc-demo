@@ -1,15 +1,8 @@
-const {admin, db} = require('./utils/admin')
 const functions = require('firebase-functions');
-// const fileUpload = require('express-fileupload');
 const app = require('express')(); //initializing the app
 const bodyParser = require('body-parser');
+const AppMail = require("./utils/email");
 const {fileParser} = require('express-multipart-file-parser');
-
-/*app.use(fileUpload({
-    limits: {fileSize: 10 * 1024 * 1024},
-    useTempFiles: true,
-    tempFileDir: '/tmp/'
-}));*/
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -39,4 +32,22 @@ app.post('/passport-verification', passportVerification);
 
 exports.api = functions.https.onRequest(app);
 
+exports.createAgentRequest = functions.firestore
+    .document("users/{id}")
+    .onUpdate(async (change, context) => {
+        // Get an object with the current document value.
+        const before = change.before.data();
+        const data = change.after.data();
 
+        if (!before.passport || !data.passport) return null;
+
+        if (!before.passport.approved && data.passport.approved) { // just approved
+            // update level
+            await change.after.ref.update({
+                level: 2
+            });
+            // notify user via email
+            return AppMail.sendEmail(data.email, 'KYC Level 2 Approved', 'Your uploaded passport has been approved');
+        }
+        return null;
+    });
