@@ -82,7 +82,7 @@ describe("Unit tests", () => {
             .end((err, res) => {
                 if (err) return done(err);
                 expect(res.body.message).to.contain('required')
-                done();
+                return done();
             });
     });
 
@@ -94,7 +94,8 @@ describe("Unit tests", () => {
             lastName: 'James',
             username: 'john',
             email: 'jjc@djade.net',
-            password: '12345678'
+            password: '12345678',
+            test: true,
         };
 
         request
@@ -104,7 +105,7 @@ describe("Unit tests", () => {
             .end((err, res) => {
                 if (err) return done(err);
                 expect(res.body.message).to.contain('Successfully')
-                done();
+                return done();
             });
     }).timeout(6000);
 
@@ -126,7 +127,7 @@ describe("Unit tests", () => {
             .end((err, res) => {
                 if (err) return done(err);
                 expect(res.body.message).to.contain('already exists')
-                done();
+                return done();
             });
     }).timeout(6000);
 
@@ -145,7 +146,7 @@ describe("Unit tests", () => {
             .end((err, res) => {
                 if (err) return done(err);
                 expect(res.body.data.accessToken).to.equal(confirmedUser.accessToken);
-                done();
+                return done();
             });
     }).timeout(6000);
 
@@ -164,7 +165,7 @@ describe("Unit tests", () => {
             .end((err, res) => {
                 if (err) return done(err);
                 expect(res.body.message).to.contain('confirm your email');
-                done();
+                return done();
             });
     }).timeout(6000);
 
@@ -176,7 +177,7 @@ describe("Unit tests", () => {
             .end((err, res) => {
                 if (err) return done(err);
                 expect(res.text).to.contain('confirmation successful');
-                done();
+                return done();
             });
     }).timeout(6000);
 
@@ -193,7 +194,7 @@ describe("Unit tests", () => {
                 expect(res.body.data.user.firstName).to.equals(confirmedUser.firstName);
                 expect(res.body.data.user.lastName).to.equals(confirmedUser.lastName);
                 expect(res.body.data.user.email).to.equals(confirmedUser.email);
-                done();
+                return done();
             });
     }).timeout(6000);
 });

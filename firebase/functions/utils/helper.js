@@ -4,12 +4,12 @@ const isEmpty = (string) => {
 }
 //for checking valid email address with regualr expression
 const isEmail = (email) => {
-    const regx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}\])|(([a-zA-Z\-0–9]+\.)+[a-zA-Z]{2,}))$/;
-    return !!email.match(regx);
+    const regx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}])|(([a-zA-Z\-0–9]+\.)+[a-zA-Z]{2,}))$/;
+    return Boolean(email.match(regx));
 }
 const isUsername = (username) => {
     const regx = /^[a-zA-Z0-9_]+$/;
-    return !!username.match(regx);
+    return Boolean(username.match(regx));
 }
 //for validating signup data
 exports.validateSignUPData = (data) => {

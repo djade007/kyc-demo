@@ -44,14 +44,16 @@ exports.signUp = async (req, res) => {
     await db.collection('users').add(newUser);
 
     // send email
-    try {
-        const link = 'https://google.com/api/confirm?token=' + newUser.emailToken;
-        const body = `
+    if (req.body.test !== true) {
+        try {
+            const link = 'https://us-central1-kyc-damo.cloudfunctions.net/api/confirm-email?token=' + newUser.emailToken;
+            const body = `
         <p>Visit <a href="${link}">${link}</a> to verify your email address</p>
         `;
-        await AppMail.sendEmail(newUser.email, 'Email Confirmation', body);
-    } catch (e) {
-        functions.logger.log(e);
+            await AppMail.sendEmail(newUser.email, 'Email Confirmation', body);
+        } catch (e) {
+            functions.logger.log(e);
+        }
     }
 
     return res.status(201).json({message: 'User Created Successfully'})
