@@ -1,4 +1,7 @@
 import 'package:get/get.dart';
+import 'package:kyc_demo/src/application.dart';
+import 'package:kyc_demo/src/components/profile/views/bvn_modal.dart';
+import 'package:kyc_demo/src/components/profile/views/passport_modal.dart';
 import 'package:kyc_demo/src/init.dart';
 
 class Utils {
@@ -70,6 +73,56 @@ class Utils {
       hintText: hint,
       hintStyle: TextStyle(fontSize: 12),
       labelStyle: TextStyle(fontSize: 12),
+    );
+  }
+
+  static void kycModal() {
+    final user = Application.auth.user;
+    final nextLevel = user.level + 1;
+    if (nextLevel > 2) {
+      return;
+    }
+    Widget modal = SizedBox();
+
+    if (nextLevel == 1) {
+      modal = BvnModal();
+    }
+
+    if (nextLevel == 2) {
+      modal = PassportModal();
+    }
+
+    Get.bottomSheet(
+      Container(
+        height: Utils.height(2),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(10),
+          ),
+        ),
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(
+                top: 10,
+                bottom: 20,
+              ),
+              height: 6,
+              width: 48,
+              decoration: BoxDecoration(
+                color: Colors.black87,
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: modal,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

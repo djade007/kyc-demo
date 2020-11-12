@@ -19,6 +19,7 @@ class AppButton extends StatelessWidget {
         onPressed: onPressed,
         child: Text(title),
         textColor: Colors.white,
+        disabledTextColor: Colors.black54,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(6),
         ),

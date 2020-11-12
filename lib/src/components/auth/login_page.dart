@@ -8,6 +8,7 @@ import 'package:kyc_demo/src/widgets/logo.dart';
 
 class LoginPage extends StatelessWidget {
   static const routeName = 'login';
+  final formKey = GlobalKey<FormBuilderState>();
   final controller = Get.put(LoginController());
 
   @override
@@ -55,82 +56,7 @@ class LoginPage extends StatelessWidget {
                               fontWeight: FontWeight.w300,
                             ),
                           ).space(bottom: 20),
-                          FormBuilder(
-                            key: controller.formKey,
-                            child: Column(
-                              children: [
-                                FormBuilderTextField(
-                                  attribute: 'email',
-                                  decoration: Utils.decoration('Email Address'),
-                                  validators: [
-                                    FormBuilderValidators.required(),
-                                    FormBuilderValidators.email(),
-                                  ],
-                                ).space(bottom: 20),
-                                FormBuilderTextField(
-                                  attribute: 'password',
-                                  decoration: Utils.decoration('Password'),
-                                  obscureText: true,
-                                  validators: [
-                                    FormBuilderValidators.required(),
-                                  ],
-                                ).space(bottom: 20),
-                                AppButton(
-                                  title: 'Sign in',
-                                  onPressed: controller.login,
-                                ).space(),
-                                Divider(),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {},
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 8, right: 8, bottom: 8),
-                                        child: Text(
-                                          'Forgot Password ?',
-                                          style: TextStyle(
-                                            color: Get.theme.primaryColor,
-                                            fontSize: 11,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Get.toNamed(RegisterPage.routeName);
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 8,
-                                          bottom: 8,
-                                        ),
-                                        child: RichText(
-                                          text: TextSpan(
-                                            style: Get.textTheme.bodyText2
-                                                .copyWith(
-                                              fontSize: 11,
-                                            ),
-                                            children: [
-                                              TextSpan(text: 'New User? '),
-                                              TextSpan(
-                                                text: 'Sign up',
-                                                style: TextStyle(
-                                                  color: Get.theme.primaryColor,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
+                          Obx(_buildForm),
                         ],
                       ),
                     ),
@@ -140,6 +66,90 @@ class LoginPage extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildForm() {
+    return FormBuilder(
+      key: formKey,
+      child: Column(
+        children: [
+          FormBuilderTextField(
+            readOnly: controller.loading.value,
+            attribute: 'email',
+            decoration: Utils.decoration('Email Address'),
+            validators: [
+              FormBuilderValidators.required(),
+              FormBuilderValidators.email(),
+            ],
+          ).space(bottom: 20),
+          FormBuilderTextField(
+            readOnly: controller.loading.value,
+            attribute: 'password',
+            decoration: Utils.decoration('Password'),
+            obscureText: true,
+            validators: [
+              FormBuilderValidators.required(),
+            ],
+          ).space(bottom: 20),
+          AppButton(
+            title: controller.loading.value ? 'Loading...' : 'Sign in',
+            onPressed: controller.loading.value
+                ? null
+                : () {
+                    controller.login(formKey);
+                  },
+          ).space(),
+          Divider(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: () {},
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8, right: 8, bottom: 8),
+                  child: Text(
+                    'Forgot Password ?',
+                    style: TextStyle(
+                      color: Get.theme.primaryColor,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: controller.loading.value
+                    ? null
+                    : () {
+                        Get.offAllNamed(RegisterPage.routeName);
+                      },
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 8,
+                    bottom: 8,
+                  ),
+                  child: RichText(
+                    text: TextSpan(
+                      style: Get.textTheme.bodyText2.copyWith(
+                        fontSize: 11,
+                      ),
+                      children: [
+                        TextSpan(text: 'New User? '),
+                        TextSpan(
+                          text: 'Sign up',
+                          style: TextStyle(
+                            color: Get.theme.primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

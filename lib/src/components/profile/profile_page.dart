@@ -1,70 +1,58 @@
 import 'package:flutter_svg/svg.dart';
-import 'package:kyc_demo/src/components/profile/views/bvn_modal.dart';
+import 'package:kyc_demo/src/application.dart';
+import 'package:kyc_demo/src/controllers/profile/profile_controller.dart';
 import 'package:kyc_demo/src/init.dart';
 import 'package:kyc_demo/src/widgets/drawer.dart';
 
 class ProfilePage extends StatelessWidget {
   static const routeName = 'profile';
+  final auth = Application.auth;
+  final controller = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
-      ),
-      drawer: AppDrawer(),
-      body: Column(
-        children: [
-          _buildHeader(),
-          _buildSteps(),
-          Container(
-            padding: const EdgeInsets.only(right: 16),
-            alignment: Alignment.centerRight,
-            child: FlatButton(
-              color: Get.theme.accentColor,
-              onPressed: () {
-                Get.bottomSheet(
-                  Container(
-                    height: Utils.height(2),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(10),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top: 10,
-                            bottom: 20,
-                          ),
-                          height: 6,
-                          width: 48,
-                          decoration: BoxDecoration(
-                            color: Colors.black87,
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                        ),
-                        Expanded(child: BvnModal()),
-                      ],
-                    ),
-                  ),
-                );
-              },
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(7),
-              ),
-              child: Text(
-                'Continue verification',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
+        actions: [
+          Obx(
+            () => IconButton(
+              icon: controller.loading.value
+                  ? CircularProgressIndicator()
+                  : const Icon(Icons.refresh),
+              onPressed: controller.loading.value ? null : controller.refresh,
             ),
           ),
         ],
       ),
+      drawer: AppDrawer(),
+      body: SingleChildScrollView(child: Obx(_buildContent)),
+    );
+  }
+
+  Widget _buildContent() {
+    return Column(
+      children: [
+        _buildHeader(),
+        _buildSteps(),
+        Container(
+          padding: const EdgeInsets.only(right: 16),
+          alignment: Alignment.centerRight,
+          child: FlatButton(
+            color: Get.theme.accentColor,
+            onPressed: Utils.kycModal,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(7),
+            ),
+            child: Text(
+              'Continue verification',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -113,7 +101,6 @@ class ProfilePage extends StatelessWidget {
                 child: Row(
                   children: [
                     _buildCard(
-                      verified: true,
                       level: 1,
                       title: 'BVN Verification',
                       svg: 'bvn',
@@ -142,8 +129,8 @@ class ProfilePage extends StatelessWidget {
     @required int level,
     @required String title,
     @required String svg,
-    bool verified: false,
   }) {
+    final verified = auth.user.level >= level;
     return Stack(
       children: [
         AnimatedOpacity(
@@ -232,9 +219,9 @@ class ProfilePage extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('johnmel').space(bottom: 5),
-                    Text('John Doe').space(bottom: 5),
-                    Text('john@jjj.com').space(bottom: 5),
+                    Text(auth.user.username).space(bottom: 5),
+                    Text(auth.user.name).space(bottom: 5),
+                    Text(auth.user.email).space(bottom: 0),
                   ],
                 ),
               ],
@@ -256,21 +243,21 @@ class ProfilePage extends StatelessWidget {
                     bottom: 7,
                   ),
                   child: Text(
-                    'KYC LV 1',
+                    'KYC LV ${auth.user.level}',
                     style: TextStyle(
                       fontSize: 12,
                     ),
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: Utils.kycModal,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 3,
                       vertical: 5,
                     ),
                     child: Text(
-                      'Upgrade to level 2',
+                      'Upgrade to level ${auth.user.level + 1}',
                       style: TextStyle(
                         fontSize: 12,
                         color: Get.theme.accentColor,

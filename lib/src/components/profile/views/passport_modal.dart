@@ -3,7 +3,7 @@ import 'package:kyc_demo/src/controllers/profile/profile_controller.dart';
 import 'package:kyc_demo/src/init.dart';
 import 'package:kyc_demo/src/widgets/button.dart';
 
-class BvnModal extends StatelessWidget {
+class PassportModal extends StatelessWidget {
   final formKey = GlobalKey<FormBuilderState>();
   final ProfileController controller = Get.find();
 
@@ -12,7 +12,7 @@ class BvnModal extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'BVN verification',
+          'Passport verification',
           style: TextStyle(
             fontWeight: FontWeight.w600,
           ),

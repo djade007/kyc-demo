@@ -37,7 +37,7 @@ exports.signUp = async (req, res) => {
 
     newUser.password = await bcrypt.hash(newUser.password, 10);
     newUser.confirmedEmail = false;
-    newUser.acessToken = randtoken.generate(32);
+    newUser.accessToken = randtoken.generate(32);
 
     newUser.emailToken = randtoken.generate(40);
 
@@ -148,6 +148,7 @@ exports.getMe = async (req, res) => {
             user: {
                 firstName: data.firstName,
                 lastName: data.lastName,
+                username: data.username,
                 email: data.email,
                 level: data.level,
             }

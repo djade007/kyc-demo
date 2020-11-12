@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kyc_demo/src/application.dart';
 import 'package:kyc_demo/src/components/auth/login_page.dart';
 import 'package:kyc_demo/src/components/auth/register_page.dart';
 import 'package:kyc_demo/src/components/dashboard/dashboard_page.dart';
 import 'package:kyc_demo/src/components/profile/profile_page.dart';
+import 'package:kyc_demo/src/services/bindings.dart';
 
-void main() {
+void main() async {
+  await Application.initialize();
   runApp(MyApp());
 }
 
@@ -29,7 +32,8 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
           accentColor: const Color(0xFF4ad3ce),
         ),
-        initialRoute: ProfilePage.routeName,
+        initialBinding: AppBindings(),
+        initialRoute: RegisterPage.routeName,
         getPages: [
           GetPage(
             name: LoginPage.routeName,

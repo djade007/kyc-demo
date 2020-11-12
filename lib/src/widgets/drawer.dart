@@ -1,24 +1,29 @@
 import 'package:get/get.dart';
+import 'package:kyc_demo/src/application.dart';
 import 'package:kyc_demo/src/components/dashboard/dashboard_page.dart';
 import 'package:kyc_demo/src/components/profile/profile_page.dart';
 import 'package:kyc_demo/src/init.dart';
 
 class AppDrawer extends StatelessWidget {
+  final auth = Application.auth;
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: Column(
         children: [
-          UserAccountsDrawerHeader(
-            accountEmail: Text('email@adfsa.com'),
-            accountName: Text('Name'),
-            currentAccountPicture: Material(
-              color: Colors.white,
-              shape: CircleBorder(),
-              child: Icon(
-                Icons.person,
-                color: Get.theme.primaryColor,
-                size: 40,
+          Obx(
+            () => UserAccountsDrawerHeader(
+              accountEmail: Text(auth.user.email),
+              accountName: Text(auth.user.name),
+              currentAccountPicture: Material(
+                color: Colors.white,
+                shape: CircleBorder(),
+                child: Icon(
+                  Icons.person,
+                  color: Get.theme.primaryColor,
+                  size: 40,
+                ),
               ),
             ),
           ),
@@ -56,7 +61,7 @@ class AppDrawer extends StatelessWidget {
                   title: Text('Logout'),
                   leading: Icon(Icons.exit_to_app),
                   onTap: () {
-                    Get.back(); // close
+                    Application.logout();
                   },
                 ),
               ],
